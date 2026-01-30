@@ -299,9 +299,23 @@ export default function App() {
     );
   }
 
+  const handleLogoClick = () => {
+    if (window.confirm("Leave practice? Your progress won't be saved.")) {
+      resetToHome();
+    }
+  };
+
   return (
     <>
-      <Layout currentDay={activeDay} onOpenSettings={() => setShowApiKeyModal(true)}>
+    <Layout
+      currentDay={activeDay}
+      onOpenSettings={() => setShowApiKeyModal(true)}
+      onLogoClick={
+        currentStep !== 'HOME' && currentStep !== 'COMPLETE'
+          ? handleLogoClick
+          : undefined
+      }
+    >
       {currentStep !== 'HOME' && (
         <div className="flex gap-2 border-b border-gray-200 mb-4">
             <button

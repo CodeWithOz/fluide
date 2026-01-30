@@ -1,9 +1,10 @@
 import { GoogleGenAI, Type } from '@google/genai';
 import type { FeedbackResponse } from '../types';
+import { getApiKeyOrEnv } from './apiKeyService';
 
 function getClient() {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-  if (!apiKey) throw new Error('VITE_GEMINI_API_KEY is not set');
+  const apiKey = getApiKeyOrEnv('gemini');
+  if (!apiKey) throw new Error('API key required for grammar check');
   return new GoogleGenAI({ apiKey });
 }
 
