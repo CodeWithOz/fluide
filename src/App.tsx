@@ -8,6 +8,8 @@ import {
 } from './data/weeklyPlan';
 import { useCustomChunks, useHistory } from './hooks/useLocalChunks';
 import { checkSentenceIntegration } from './services/grammarCheck';
+import { hasApiKeyOrEnv } from './services/apiKeyService';
+import { ApiKeySetup } from './components/ApiKeySetup';
 import {
   STEPS_INFO,
   DRILL_TIMER_SECONDS,
@@ -23,7 +25,6 @@ import {
   Calendar,
   Star,
   Mic,
-  Clock,
   History as HistoryIcon,
   Library as LibraryIcon,
   PenTool,
@@ -34,8 +35,6 @@ import {
 } from 'lucide-react';
 
 type Tab = 'practice' | 'library' | 'history';
-
-const STEPS: PracticeStep[] = ['HOME', 'SELECT', 'DRILL', 'INTEGRATE', 'MONOLOGUE', 'COMPLETE'];
 
 const THEME_OPTIONS: ThemeKey[] = [
   'Opinions',
@@ -55,6 +54,7 @@ export default function App() {
   const [selectedChunks, setSelectedChunks] = useState<Chunk[]>([]);
   const [sentences, setSentences] = useState<Record<string, string>>({});
   const [feedbackByChunk, setFeedbackByChunk] = useState<Record<string, FeedbackResponse | null>>({});
+  const [grammarErrorByChunk, setGrammarErrorByChunk] = useState<Record<string, string | null>>({});
   const [monologuePrompt, setMonologuePrompt] = useState('');
   const [monologueTimeLeft, setMonologueTimeLeft] = useState(MONOLOGUE_TIMER_SECONDS);
   const [isMonologueTimerActive, setIsMonologueTimerActive] = useState(false);
@@ -71,6 +71,7 @@ export default function App() {
     translation: '',
     phonetic: '',
   });
+  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
 
   const plan = WEEKLY_PLAN[activeDay];
   const chunksForDay = getChunksForDay(activeDay, customChunks);
@@ -152,22 +153,33 @@ export default function App() {
   const handleSentenceChange = (id: string, text: string) => {
     setSentences((prev) => ({ ...prev, [id]: text }));
     setFeedbackByChunk((prev) => ({ ...prev, [id]: null }));
+    setGrammarErrorByChunk((prev) => ({ ...prev, [id]: null }));
   };
 
   const handleCheckGrammar = async (chunkId: string) => {
+    if (!hasApiKeyOrEnv('gemini')) {
+      setShowApiKeyModal(true);
+      return;
+    }
     const chunk = selectedChunks.find((c) => c.id === chunkId);
     const sentence = sentences[chunkId]?.trim();
     if (!chunk || !sentence) return;
     setCheckingChunkId(chunkId);
+    setGrammarErrorByChunk((prev) => ({ ...prev, [chunkId]: null }));
+    setFeedbackByChunk((prev) => ({ ...prev, [chunkId]: null }));
     try {
       const result = await checkSentenceIntegration(chunk.text, sentence);
       setFeedbackByChunk((prev) => ({ ...prev, [chunkId]: result }));
-    } catch (e) {
-      console.error(e);
+    } catch {
+      setGrammarErrorByChunk((prev) => ({ ...prev, [chunkId]: 'Something went wrong.' }));
     } finally {
       setCheckingChunkId(null);
     }
   };
+
+  const handleApiKeyModalClose = () => setShowApiKeyModal(false);
+
+  const handleApiKeySave = () => { };
 
   const handleFinishWorkout = () => {
     const theme = plan?.theme ?? activeDay;
@@ -187,6 +199,7 @@ export default function App() {
     setSelectedChunks([]);
     setSentences({});
     setFeedbackByChunk({});
+    setGrammarErrorByChunk({});
     setMonologuePrompt('');
     setMonologueTimeLeft(MONOLOGUE_TIMER_SECONDS);
     setIsMonologueTimerActive(false);
@@ -205,8 +218,9 @@ export default function App() {
 
   if (activeTab === 'library') {
     return (
-      <Layout currentDay={activeDay}>
-        <div className="flex gap-2 border-b border-gray-200 mb-6">
+      <>
+        <Layout currentDay={activeDay} onOpenSettings={() => setShowApiKeyModal(true)}>
+          <div className="flex gap-2 border-b border-gray-200 mb-6">
           <button
             type="button"
             onClick={() => setActiveTab('practice')}
@@ -241,14 +255,19 @@ export default function App() {
           setEditForm={setEditForm}
           addChunk={addChunk}
         />
-      </Layout>
+        </Layout>
+        {showApiKeyModal && (
+          <ApiKeySetup onClose={handleApiKeyModalClose} onSave={handleApiKeySave} />
+        )}
+      </>
     );
   }
 
   if (activeTab === 'history') {
     return (
-      <Layout currentDay={activeDay}>
-        <div className="flex gap-2 border-b border-gray-200 mb-6">
+      <>
+        <Layout currentDay={activeDay} onOpenSettings={() => setShowApiKeyModal(true)}>
+          <div className="flex gap-2 border-b border-gray-200 mb-6">
           <button
             type="button"
             onClick={() => setActiveTab('practice')}
@@ -271,13 +290,18 @@ export default function App() {
             History
           </button>
         </div>
-        <HistoryView history={history} />
-      </Layout>
+          <HistoryView history={history} />
+        </Layout>
+        {showApiKeyModal && (
+          <ApiKeySetup onClose={handleApiKeyModalClose} onSave={handleApiKeySave} />
+        )}
+      </>
     );
   }
 
   return (
-    <Layout currentDay={activeDay}>
+    <>
+      <Layout currentDay={activeDay} onOpenSettings={() => setShowApiKeyModal(true)}>
       {currentStep !== 'HOME' && (
         <div className="flex gap-2 border-b border-gray-200 mb-4">
             <button
@@ -318,7 +342,7 @@ export default function App() {
               Daily Routine
             </h3>
             <ul className="space-y-3">
-              {STEPS_INFO.map((step, idx) => (
+                {STEPS_INFO.map((step) => (
                 <li
                   key={step.id}
                   className="flex items-center justify-between text-gray-600 text-sm"
@@ -557,6 +581,13 @@ export default function App() {
                     Check my grammar
                   </button>
                 </div>
+                {grammarErrorByChunk[chunk.id] && (
+                  <div className="mt-4 p-4 rounded-xl border bg-red-50 border-red-200">
+                    <p className="text-sm text-red-700 font-medium">
+                      {grammarErrorByChunk[chunk.id]}
+                    </p>
+                  </div>
+                )}
                 {feedbackByChunk[chunk.id] && (
                   <div
                     className={`mt-4 p-4 rounded-xl border ${
@@ -749,7 +780,11 @@ export default function App() {
           </button>
         </div>
       )}
-    </Layout>
+      </Layout>
+      {showApiKeyModal && (
+        <ApiKeySetup onClose={handleApiKeyModalClose} onSave={handleApiKeySave} />
+      )}
+    </>
   );
 }
 
