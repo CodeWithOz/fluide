@@ -114,7 +114,7 @@ export function ApiKeySetup({ onClose, onSave }: ApiKeySetupProps) {
             </a>
             . For production, deploy your version of the app from the{' '}
             <a
-              href="https://github.com"
+              href="https://github.com/CodeWithOz/fluide"
               target="_blank"
               rel="noopener noreferrer"
               className="text-french-blue hover:text-blue-700 underline"
