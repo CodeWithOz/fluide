@@ -12,7 +12,7 @@ export interface DayPlan {
 export const WEEKLY_PLAN: Record<string, DayPlan> = {
   Monday: {
     theme: 'Opinions',
-    description: 'Learn to give your view without hesitation.',
+    description: 'Learn to give your opinion without hesitation.',
     themeKey: 'Opinions',
     chunks: [
       { id: 'm1', text: "À mon avis", translation: "In my opinion" },

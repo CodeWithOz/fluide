@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Calendar, Settings } from 'lucide-react';
+import { LogoMark } from './LogoMark';
 
 interface LayoutProps {
   children: ReactNode;
@@ -21,16 +22,12 @@ export function Layout({ children, currentDay, onLogoClick, onOpenSettings }: La
                 className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-french-blue focus:ring-offset-2 rounded"
                 aria-label="Back to start"
               >
-                <div className="w-8 h-8 bg-french-blue rounded-md flex items-center justify-center text-white font-bold">
-                  Fl
-                </div>
+                <LogoMark size={32} className="shrink-0" />
                 <h1 className="font-bold text-gray-800 tracking-tight">Fluide</h1>
               </button>
             ) : (
               <>
-                <div className="w-8 h-8 bg-french-blue rounded-md flex items-center justify-center text-white font-bold">
-                  Fl
-                </div>
+                <LogoMark size={32} className="shrink-0" />
                 <h1 className="font-bold text-gray-800 tracking-tight">Fluide</h1>
               </>
             )}
