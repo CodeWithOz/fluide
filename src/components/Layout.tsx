@@ -53,8 +53,31 @@ export function Layout({ children, currentDay, onLogoClick, onOpenSettings }: La
       <main className="w-full max-w-3xl px-4 py-6 flex-grow flex flex-col">
         {children}
       </main>
-      <footer className="w-full py-6 text-center text-gray-400 text-sm">
-        <p>Based on the method by Français avec Pierre</p>
+      <footer className="w-full py-6 text-center text-gray-400 text-sm flex flex-col items-center justify-center space-y-3 md:flex-row md:space-y-0 md:gap-x-2">
+        <p>
+          Based on the{' '}
+          <a
+            href="https://www.francaisavecpierre.com/francais-avec-fluidite/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-french-blue hover:underline"
+          >
+            chunking method
+          </a>
+          .
+        </p>
+        <p>
+          Built by{' '}
+          <a
+            href="https://www.linkedin.com/in/uchechukwu-ozoemena/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-french-blue hover:underline"
+          >
+            CodeWithOz
+          </a>
+          .
+        </p>
       </footer>
     </div>
   );
