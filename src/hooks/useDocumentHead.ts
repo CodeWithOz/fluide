@@ -39,6 +39,17 @@ export function useDocumentHead(metadata: DocumentHeadMetadata): void {
       tag.setAttribute('content', content);
     };
 
+    const removeTag = (selector: string) => {
+      document.querySelector(selector)?.remove();
+    };
+
+    // Remove optional tags when their metadata is omitted so we don't leave stale tags on route/metadata changes
+    if (!metadata.ogType) removeTag('meta[property="og:type"]');
+    if (!metadata.ogUrl) removeTag('meta[property="og:url"]');
+    if (!metadata.ogImage) removeTag('meta[property="og:image"]');
+    if (!(metadata.twitterImage ?? metadata.ogImage)) removeTag('meta[name="twitter:image"]');
+    if (!metadata.canonicalUrl) removeTag('link[rel="canonical"]');
+
     setMetaTag('meta[name="description"]', 'name', 'description', metadata.description);
 
     const ogTitle = metadata.ogTitle ?? metadata.title;
