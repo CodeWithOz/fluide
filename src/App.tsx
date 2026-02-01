@@ -7,6 +7,7 @@ import {
   getChunksForDay,
 } from './data/weeklyPlan';
 import { useCustomChunks, useHistory } from './hooks/useLocalChunks';
+import { useDocumentHead } from './hooks/useDocumentHead';
 import { checkSentenceIntegration } from './services/grammarCheck';
 import { hasApiKeyOrEnv } from './services/apiKeyService';
 import { ApiKeySetup } from './components/ApiKeySetup';
@@ -44,7 +45,23 @@ const THEME_OPTIONS: ThemeKey[] = [
   'Interaction',
 ];
 
+const SITE_URL =
+  (import.meta.env.VITE_SITE_URL as string | undefined) ?? 'https://fluide.prototypes.haus';
+
+const SEO_METADATA = {
+  title: 'Fluide – French Chunking Practice',
+  description:
+    'Practice French in chunks with Fluide. Weekly plans for giving your opinion, expressing wants, necessity, and real conversation—built for confident speaking.',
+  ogTitle: 'Fluide – French Chunking Practice',
+  ogDescription:
+    'Practice French in chunks with Fluide. Weekly plans for giving your opinion, expressing wants, necessity, and real conversation—built for confident speaking.',
+  ogType: 'website' as const,
+  ogUrl: SITE_URL,
+  canonicalUrl: SITE_URL,
+};
+
 export default function App() {
+  useDocumentHead(SEO_METADATA);
   const { customChunks, addChunk, updateChunk, deleteChunk } = useCustomChunks();
   const { history, addSession } = useHistory();
 
