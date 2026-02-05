@@ -738,8 +738,8 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => {
-                  setIsMonologueTimerActive(false);
                   setMonologueTimeLeft(MONOLOGUE_TIMER_SECONDS);
+                  setIsMonologueTimerActive(true);
                 }}
                 className="p-3 text-gray-400 hover:text-gray-600"
               >
