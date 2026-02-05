@@ -142,9 +142,11 @@ export default function App() {
     };
   }, [isDrillTimerActive, drillTimeLeft, playTimerSound]);
 
-  // Stop timer sound when user changes practice step
+  // Stop timers and sound when user changes practice step
   useEffect(() => {
     stopTimerSound();
+    setIsDrillTimerActive(false);
+    setIsMonologueTimerActive(false);
   }, [currentStep, stopTimerSound]);
 
   const handleStart = () => {
