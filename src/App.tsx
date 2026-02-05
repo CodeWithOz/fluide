@@ -8,6 +8,7 @@ import {
 } from './data/weeklyPlan';
 import { useCustomChunks, useHistory } from './hooks/useLocalChunks';
 import { useDocumentHead } from './hooks/useDocumentHead';
+import { useTimerSound } from './hooks/useTimerSound';
 import { checkSentenceIntegration } from './services/grammarCheck';
 import { hasApiKeyOrEnv } from './services/apiKeyService';
 import { ApiKeySetup } from './components/ApiKeySetup';
@@ -62,6 +63,7 @@ const SEO_METADATA = {
 
 export default function App() {
   useDocumentHead(SEO_METADATA);
+  const { playTimerSound } = useTimerSound();
   const { customChunks, addChunk, updateChunk, deleteChunk } = useCustomChunks();
   const { history, addSession } = useHistory();
 
@@ -115,13 +117,14 @@ export default function App() {
         setMonologueTimeLeft((p) => p - 1);
         setTimeLoggedMonologueSeconds((p) => p + 1);
       }, 1000);
-    } else if (monologueTimeLeft === 0) {
+    } else if (monologueTimeLeft === 0 && isMonologueTimerActive) {
+      playTimerSound();
       setIsMonologueTimerActive(false);
     }
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isMonologueTimerActive, monologueTimeLeft]);
+  }, [isMonologueTimerActive, monologueTimeLeft, playTimerSound]);
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | null = null;
@@ -130,13 +133,14 @@ export default function App() {
         setDrillTimeLeft((p) => p - 1);
         setTimeLoggedDrillSeconds((p) => p + 1);
       }, 1000);
-    } else if (drillTimeLeft === 0) {
+    } else if (drillTimeLeft === 0 && isDrillTimerActive) {
+      playTimerSound();
       setIsDrillTimerActive(false);
     }
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isDrillTimerActive, drillTimeLeft]);
+  }, [isDrillTimerActive, drillTimeLeft, playTimerSound]);
 
   const handleStart = () => {
     if (plan?.isSpecial && (activeDay === 'Saturday' || activeDay === 'Sunday')) {
