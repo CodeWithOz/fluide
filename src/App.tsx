@@ -8,6 +8,7 @@ import {
 } from './data/weeklyPlan';
 import { useCustomChunks, useHistory } from './hooks/useLocalChunks';
 import { useDocumentHead } from './hooks/useDocumentHead';
+import { useTimerSound } from './hooks/useTimerSound';
 import { checkSentenceIntegration } from './services/grammarCheck';
 import { hasApiKeyOrEnv } from './services/apiKeyService';
 import { ApiKeySetup } from './components/ApiKeySetup';
@@ -62,6 +63,7 @@ const SEO_METADATA = {
 
 export default function App() {
   useDocumentHead(SEO_METADATA);
+  const { playTimerSound, stopTimerSound } = useTimerSound();
   const { customChunks, addChunk, updateChunk, deleteChunk } = useCustomChunks();
   const { history, addSession } = useHistory();
 
@@ -115,13 +117,14 @@ export default function App() {
         setMonologueTimeLeft((p) => p - 1);
         setTimeLoggedMonologueSeconds((p) => p + 1);
       }, 1000);
-    } else if (monologueTimeLeft === 0) {
+    } else if (monologueTimeLeft === 0 && isMonologueTimerActive) {
+      playTimerSound();
       setIsMonologueTimerActive(false);
     }
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isMonologueTimerActive, monologueTimeLeft]);
+  }, [isMonologueTimerActive, monologueTimeLeft, playTimerSound]);
 
   useEffect(() => {
     let interval: ReturnType<typeof setInterval> | null = null;
@@ -130,13 +133,21 @@ export default function App() {
         setDrillTimeLeft((p) => p - 1);
         setTimeLoggedDrillSeconds((p) => p + 1);
       }, 1000);
-    } else if (drillTimeLeft === 0) {
+    } else if (drillTimeLeft === 0 && isDrillTimerActive) {
+      playTimerSound();
       setIsDrillTimerActive(false);
     }
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isDrillTimerActive, drillTimeLeft]);
+  }, [isDrillTimerActive, drillTimeLeft, playTimerSound]);
+
+  // Stop timers and sound when user changes practice step
+  useEffect(() => {
+    stopTimerSound();
+    setIsDrillTimerActive(false);
+    setIsMonologueTimerActive(false);
+  }, [currentStep, stopTimerSound]);
 
   const handleStart = () => {
     if (plan?.isSpecial && (activeDay === 'Saturday' || activeDay === 'Sunday')) {
@@ -501,6 +512,7 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => {
+                        stopTimerSound();
                         setDrillTimeLeft(DRILL_TIMER_SECONDS);
                         setIsDrillTimerActive(true);
                       }}
@@ -520,6 +532,7 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => {
+                      stopTimerSound();
                       setIsDrillTimerActive(false);
                       setDrillTimeLeft(DRILL_TIMER_SECONDS);
                     }}
@@ -720,7 +733,10 @@ export default function App() {
               {!isMonologueTimerActive && monologueTimeLeft === MONOLOGUE_TIMER_SECONDS && (
                 <button
                   type="button"
-                  onClick={() => setIsMonologueTimerActive(true)}
+                  onClick={() => {
+                    stopTimerSound();
+                    setIsMonologueTimerActive(true);
+                  }}
                   className="px-8 py-3 bg-french-blue text-white rounded-full font-bold flex items-center gap-2"
                 >
                   <Play size={18} /> Start Timer
@@ -738,6 +754,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => {
+                  stopTimerSound();
                   setMonologueTimeLeft(MONOLOGUE_TIMER_SECONDS);
                   setIsMonologueTimerActive(true);
                 }}
