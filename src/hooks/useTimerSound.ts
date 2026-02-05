@@ -1,11 +1,16 @@
 import { useCallback, useRef } from 'react';
 
+const REPEAT_COUNT = 10;
+const REPEAT_INTERVAL_MS = 1000; // 1 second between each sound
+
 /**
  * Hook for playing timer notification sounds using the Web Audio API.
  * Generates tones programmatically without requiring audio files.
  */
 export function useTimerSound() {
   const audioContextRef = useRef<AudioContext | null>(null);
+  const repeatTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const playCountRef = useRef(0);
 
   const getAudioContext = useCallback(() => {
     if (!audioContextRef.current) {
@@ -19,17 +24,11 @@ export function useTimerSound() {
   }, []);
 
   /**
-   * Plays a pleasant two-tone notification sound.
-   * Similar to a kitchen timer or phone alarm.
+   * Plays a single two-tone notification sound.
    */
-  const playTimerSound = useCallback(() => {
+  const playSingleSound = useCallback(() => {
     const audioContext = getAudioContext();
     const now = audioContext.currentTime;
-
-    // Create a gain node for volume control and fade out
-    const gainNode = audioContext.createGain();
-    gainNode.connect(audioContext.destination);
-    gainNode.gain.setValueAtTime(0.3, now);
 
     // Play a sequence of two tones for a pleasant notification
     const frequencies = [880, 1108.73]; // A5 and C#6 - a major third interval
@@ -59,5 +58,42 @@ export function useTimerSound() {
     });
   }, [getAudioContext]);
 
-  return { playTimerSound };
+  /**
+   * Stops the repeated timer sound playback.
+   */
+  const stopTimerSound = useCallback(() => {
+    if (repeatTimeoutRef.current) {
+      clearTimeout(repeatTimeoutRef.current);
+      repeatTimeoutRef.current = null;
+    }
+    playCountRef.current = 0;
+  }, []);
+
+  /**
+   * Plays a pleasant two-tone notification sound repeatedly.
+   * Similar to a kitchen timer or phone alarm.
+   * Plays up to 10 times, 1 second apart.
+   */
+  const playTimerSound = useCallback(() => {
+    // Stop any existing playback first
+    stopTimerSound();
+
+    const playNext = () => {
+      if (playCountRef.current >= REPEAT_COUNT) {
+        stopTimerSound();
+        return;
+      }
+
+      playSingleSound();
+      playCountRef.current += 1;
+
+      if (playCountRef.current < REPEAT_COUNT) {
+        repeatTimeoutRef.current = setTimeout(playNext, REPEAT_INTERVAL_MS);
+      }
+    };
+
+    playNext();
+  }, [playSingleSound, stopTimerSound]);
+
+  return { playTimerSound, stopTimerSound };
 }
