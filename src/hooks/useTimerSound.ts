@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 const REPEAT_COUNT = 10;
 const REPEAT_INTERVAL_MS = 1000; // 1 second between each sound
@@ -67,6 +67,15 @@ export function useTimerSound() {
       repeatTimeoutRef.current = null;
     }
     playCountRef.current = 0;
+  }, []);
+
+  // Cleanup on unmount to prevent orphaned timers
+  useEffect(() => {
+    return () => {
+      if (repeatTimeoutRef.current) {
+        clearTimeout(repeatTimeoutRef.current);
+      }
+    };
   }, []);
 
   /**
