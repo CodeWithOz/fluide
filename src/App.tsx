@@ -34,6 +34,7 @@ import {
   CheckCircle2,
   Trash2,
   Pencil,
+  Dumbbell,
 } from 'lucide-react';
 
 type Tab = 'practice' | 'library' | 'history';
@@ -252,23 +253,23 @@ export default function App() {
           <button
             type="button"
             onClick={() => setActiveTab('practice')}
-            className="px-4 py-2 text-gray-600 hover:text-french-blue font-medium"
+            className="px-4 py-2 text-gray-600 hover:text-french-blue font-medium flex items-center gap-1"
           >
-            Practice
+            <Dumbbell size={16} /> Practice
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('library')}
-            className="px-4 py-2 text-french-blue border-b-2 border-french-blue font-medium"
+            className="px-4 py-2 text-french-blue border-b-2 border-french-blue font-medium flex items-center gap-1"
           >
-            Chunk Library
+            <LibraryIcon size={16} /> Chunk Library
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('history')}
-            className="px-4 py-2 text-gray-600 hover:text-french-blue font-medium"
+            className="px-4 py-2 text-gray-600 hover:text-french-blue font-medium flex items-center gap-1"
           >
-            History
+            <HistoryIcon size={16} /> History
           </button>
         </div>
         <LibraryView
@@ -299,23 +300,23 @@ export default function App() {
           <button
             type="button"
             onClick={() => setActiveTab('practice')}
-            className="px-4 py-2 text-gray-600 hover:text-french-blue font-medium"
+            className="px-4 py-2 text-gray-600 hover:text-french-blue font-medium flex items-center gap-1"
           >
-            Practice
+            <Dumbbell size={16} /> Practice
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('library')}
-            className="px-4 py-2 text-gray-600 hover:text-french-blue font-medium"
+            className="px-4 py-2 text-gray-600 hover:text-french-blue font-medium flex items-center gap-1"
           >
-            Chunk Library
+            <LibraryIcon size={16} /> Chunk Library
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('history')}
-            className="px-4 py-2 text-french-blue border-b-2 border-french-blue font-medium"
+            className="px-4 py-2 text-french-blue border-b-2 border-french-blue font-medium flex items-center gap-1"
           >
-            History
+            <HistoryIcon size={16} /> History
           </button>
         </div>
           <HistoryView history={history} />
@@ -348,9 +349,9 @@ export default function App() {
           <button
             type="button"
             onClick={() => setActiveTab('practice')}
-            className="px-4 py-2 text-french-blue border-b-2 border-french-blue font-medium"
+            className="px-4 py-2 text-french-blue border-b-2 border-french-blue font-medium flex items-center gap-1"
           >
-            Practice
+            <Dumbbell size={16} /> Practice
           </button>
           <button
             type="button"
