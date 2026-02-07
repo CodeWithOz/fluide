@@ -344,14 +344,20 @@ export default function App() {
           : undefined
       }
     >
-      {currentStep !== 'HOME' && (
-        <div className="flex gap-2 border-b border-gray-200 mb-4">
-            <button
-              type="button"
-              onClick={() => setActiveTab('library')}
-              className="px-4 py-2 text-gray-600 hover:text-french-blue font-medium flex items-center gap-1"
-            >
-              <LibraryIcon size={16} /> Library
+      <div className="flex gap-2 border-b border-gray-200 mb-4">
+          <button
+            type="button"
+            onClick={() => setActiveTab('practice')}
+            className="px-4 py-2 text-french-blue border-b-2 border-french-blue font-medium"
+          >
+            Practice
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('library')}
+            className="px-4 py-2 text-gray-600 hover:text-french-blue font-medium flex items-center gap-1"
+          >
+            <LibraryIcon size={16} /> Chunk Library
           </button>
           <button
             type="button"
@@ -361,7 +367,6 @@ export default function App() {
             <HistoryIcon size={16} /> History
           </button>
         </div>
-      )}
 
       {currentStep !== 'HOME' && currentStep !== 'COMPLETE' && (
         <StepIndicator currentStep={currentStep} />
