@@ -735,19 +735,19 @@ export default function App() {
               {formatTime(monologueTimeLeft)}
             </div>
             <div className="flex justify-center gap-2 mb-4">
-              {!isMonologueTimerActive && monologueTimeLeft === MONOLOGUE_TIMER_SECONDS && (
+              {!isMonologueTimerActive ? (
                 <button
                   type="button"
                   onClick={() => {
                     stopTimerSound();
+                    setMonologueTimeLeft(MONOLOGUE_TIMER_SECONDS);
                     setIsMonologueTimerActive(true);
                   }}
                   className="px-8 py-3 bg-french-blue text-white rounded-full font-bold flex items-center gap-2"
                 >
-                  <Play size={18} /> Start Timer
+                  <Play size={18} /> Start
                 </button>
-              )}
-              {isMonologueTimerActive && (
+              ) : (
                 <button
                   type="button"
                   onClick={() => setIsMonologueTimerActive(false)}
@@ -760,8 +760,8 @@ export default function App() {
                 type="button"
                 onClick={() => {
                   stopTimerSound();
+                  setIsMonologueTimerActive(false);
                   setMonologueTimeLeft(MONOLOGUE_TIMER_SECONDS);
-                  setIsMonologueTimerActive(true);
                 }}
                 className="p-3 text-gray-400 hover:text-gray-600"
               >
