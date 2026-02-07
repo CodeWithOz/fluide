@@ -64,7 +64,7 @@ const SEO_METADATA = {
 
 export default function App() {
   useDocumentHead(SEO_METADATA);
-  const { playTimerSound, stopTimerSound } = useTimerSound();
+  const { playTimerSound, stopTimerSound, warmUp: warmUpAudio } = useTimerSound();
   const { customChunks, addChunk, updateChunk, deleteChunk } = useCustomChunks();
   const { history, addSession } = useHistory();
 
@@ -518,6 +518,7 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => {
+                        warmUpAudio();
                         stopTimerSound();
                         if (drillTimeLeft === 0) setDrillTimeLeft(DRILL_TIMER_SECONDS);
                         setIsDrillTimerActive(true);
@@ -740,6 +741,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => {
+                    warmUpAudio();
                     stopTimerSound();
                     if (monologueTimeLeft === 0) setMonologueTimeLeft(MONOLOGUE_TIMER_SECONDS);
                     setIsMonologueTimerActive(true);
