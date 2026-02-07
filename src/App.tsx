@@ -519,7 +519,7 @@ export default function App() {
                       type="button"
                       onClick={() => {
                         stopTimerSound();
-                        setDrillTimeLeft(DRILL_TIMER_SECONDS);
+                        if (drillTimeLeft === 0) setDrillTimeLeft(DRILL_TIMER_SECONDS);
                         setIsDrillTimerActive(true);
                       }}
                       className="px-6 py-2 bg-french-blue text-white rounded-full font-bold flex items-center gap-2"
@@ -741,7 +741,7 @@ export default function App() {
                   type="button"
                   onClick={() => {
                     stopTimerSound();
-                    setMonologueTimeLeft(MONOLOGUE_TIMER_SECONDS);
+                    if (monologueTimeLeft === 0) setMonologueTimeLeft(MONOLOGUE_TIMER_SECONDS);
                     setIsMonologueTimerActive(true);
                   }}
                   className="px-8 py-3 bg-french-blue text-white rounded-full font-bold flex items-center gap-2"
