@@ -104,5 +104,14 @@ export function useTimerSound() {
     playNext();
   }, [playSingleSound, stopTimerSound]);
 
-  return { playTimerSound, stopTimerSound };
+  /**
+   * Warms up the AudioContext during a user gesture so it's ready
+   * when playTimerSound is called later from a useEffect.
+   * Browsers block AudioContext creation/resumption outside user gestures.
+   */
+  const warmUp = useCallback(() => {
+    getAudioContext();
+  }, [getAudioContext]);
+
+  return { playTimerSound, stopTimerSound, warmUp };
 }

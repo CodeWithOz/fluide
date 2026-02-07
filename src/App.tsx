@@ -34,6 +34,7 @@ import {
   CheckCircle2,
   Trash2,
   Pencil,
+  Dumbbell,
 } from 'lucide-react';
 
 type Tab = 'practice' | 'library' | 'history';
@@ -63,7 +64,7 @@ const SEO_METADATA = {
 
 export default function App() {
   useDocumentHead(SEO_METADATA);
-  const { playTimerSound, stopTimerSound } = useTimerSound();
+  const { playTimerSound, stopTimerSound, warmUp: warmUpAudio } = useTimerSound();
   const { customChunks, addChunk, updateChunk, deleteChunk } = useCustomChunks();
   const { history, addSession } = useHistory();
 
@@ -252,23 +253,23 @@ export default function App() {
           <button
             type="button"
             onClick={() => setActiveTab('practice')}
-            className="px-4 py-2 text-gray-600 hover:text-french-blue font-medium"
+            className="px-4 py-2 text-gray-600 hover:text-french-blue font-medium flex items-center gap-1"
           >
-            Practice
+            <Dumbbell size={16} /> Practice
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('library')}
-            className="px-4 py-2 text-french-blue border-b-2 border-french-blue font-medium"
+            className="px-4 py-2 text-french-blue border-b-2 border-french-blue font-medium flex items-center gap-1"
           >
-            Chunk Library
+            <LibraryIcon size={16} /> Chunk Library
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('history')}
-            className="px-4 py-2 text-gray-600 hover:text-french-blue font-medium"
+            className="px-4 py-2 text-gray-600 hover:text-french-blue font-medium flex items-center gap-1"
           >
-            History
+            <HistoryIcon size={16} /> History
           </button>
         </div>
         <LibraryView
@@ -299,23 +300,23 @@ export default function App() {
           <button
             type="button"
             onClick={() => setActiveTab('practice')}
-            className="px-4 py-2 text-gray-600 hover:text-french-blue font-medium"
+            className="px-4 py-2 text-gray-600 hover:text-french-blue font-medium flex items-center gap-1"
           >
-            Practice
+            <Dumbbell size={16} /> Practice
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('library')}
-            className="px-4 py-2 text-gray-600 hover:text-french-blue font-medium"
+            className="px-4 py-2 text-gray-600 hover:text-french-blue font-medium flex items-center gap-1"
           >
-            Chunk Library
+            <LibraryIcon size={16} /> Chunk Library
           </button>
           <button
             type="button"
             onClick={() => setActiveTab('history')}
-            className="px-4 py-2 text-french-blue border-b-2 border-french-blue font-medium"
+            className="px-4 py-2 text-french-blue border-b-2 border-french-blue font-medium flex items-center gap-1"
           >
-            History
+            <HistoryIcon size={16} /> History
           </button>
         </div>
           <HistoryView history={history} />
@@ -344,14 +345,20 @@ export default function App() {
           : undefined
       }
     >
-      {currentStep !== 'HOME' && (
-        <div className="flex gap-2 border-b border-gray-200 mb-4">
-            <button
-              type="button"
-              onClick={() => setActiveTab('library')}
-              className="px-4 py-2 text-gray-600 hover:text-french-blue font-medium flex items-center gap-1"
-            >
-              <LibraryIcon size={16} /> Library
+      <div className="flex gap-2 border-b border-gray-200 mb-4">
+          <button
+            type="button"
+            onClick={() => setActiveTab('practice')}
+            className="px-4 py-2 text-french-blue border-b-2 border-french-blue font-medium flex items-center gap-1"
+          >
+            <Dumbbell size={16} /> Practice
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('library')}
+            className="px-4 py-2 text-gray-600 hover:text-french-blue font-medium flex items-center gap-1"
+          >
+            <LibraryIcon size={16} /> Chunk Library
           </button>
           <button
             type="button"
@@ -361,7 +368,6 @@ export default function App() {
             <HistoryIcon size={16} /> History
           </button>
         </div>
-      )}
 
       {currentStep !== 'HOME' && currentStep !== 'COMPLETE' && (
         <StepIndicator currentStep={currentStep} />
@@ -512,8 +518,9 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => {
+                        warmUpAudio();
                         stopTimerSound();
-                        setDrillTimeLeft(DRILL_TIMER_SECONDS);
+                        if (drillTimeLeft === 0) setDrillTimeLeft(DRILL_TIMER_SECONDS);
                         setIsDrillTimerActive(true);
                       }}
                       className="px-6 py-2 bg-french-blue text-white rounded-full font-bold flex items-center gap-2"
@@ -730,19 +737,20 @@ export default function App() {
               {formatTime(monologueTimeLeft)}
             </div>
             <div className="flex justify-center gap-2 mb-4">
-              {!isMonologueTimerActive && monologueTimeLeft === MONOLOGUE_TIMER_SECONDS && (
+              {!isMonologueTimerActive ? (
                 <button
                   type="button"
                   onClick={() => {
+                    warmUpAudio();
                     stopTimerSound();
+                    if (monologueTimeLeft === 0) setMonologueTimeLeft(MONOLOGUE_TIMER_SECONDS);
                     setIsMonologueTimerActive(true);
                   }}
                   className="px-8 py-3 bg-french-blue text-white rounded-full font-bold flex items-center gap-2"
                 >
-                  <Play size={18} /> Start Timer
+                  <Play size={18} /> Start
                 </button>
-              )}
-              {isMonologueTimerActive && (
+              ) : (
                 <button
                   type="button"
                   onClick={() => setIsMonologueTimerActive(false)}
@@ -755,8 +763,8 @@ export default function App() {
                 type="button"
                 onClick={() => {
                   stopTimerSound();
+                  setIsMonologueTimerActive(false);
                   setMonologueTimeLeft(MONOLOGUE_TIMER_SECONDS);
-                  setIsMonologueTimerActive(true);
                 }}
                 className="p-3 text-gray-400 hover:text-gray-600"
               >
