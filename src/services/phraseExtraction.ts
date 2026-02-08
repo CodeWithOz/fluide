@@ -41,18 +41,23 @@ Good examples of what to extract:
 - "Ça dépend de" (It depends on) — subject + verb + preposition
 - "Il me semble que" (It seems to me that) — sentence starter with verb
 
+Complete sentences ARE acceptable if they are common conversational patterns used frequently in daily speech, such as:
+- "Je suis d'accord" (I agree)
+- "Je vois ce que tu veux dire" (I see what you mean)
+- "Ça ne me dérange pas" (It doesn't bother me)
+
 Do NOT extract:
 - Single words (e.g. "cependant", "effectivement")
 - Simple noun phrases without a verb (e.g. "la situation", "mon avis")
-- Complete long sentences — extract only the reusable chunk/starter portion
+- Long, complex, or highly specific sentences that wouldn't be reused as-is
 
-Every extracted chunk MUST contain at least a verb. Prioritize chunks that serve as sentence starters or conversational transitions — the kind of word groups a learner would drill to speak fluidly without hesitation.
+Every extracted chunk MUST contain at least a verb. Prioritize chunks that serve as sentence starters, conversational transitions, or common speech patterns — the kind of word groups a learner would drill to speak fluidly without hesitation.
 
 Categorize each chunk into one of these themes:
 ${THEMES_DESCRIPTION}
 
 For each chunk, provide:
-- "text": the French chunk exactly as it should be practiced (2-5 words, must include a verb)
+- "text": the French chunk exactly as it should be practiced (must include a verb, typically 2-7 words)
 - "translation": a natural English translation
 - "phonetic": an approximate pronunciation guide for English speakers (use simple phonetic spelling, e.g. "zhuh pawns kuh")
 - "theme": one of "Opinions", "Desires & Intentions", "Obligations", "Difficulties", "Interaction"

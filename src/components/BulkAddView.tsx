@@ -96,6 +96,11 @@ export function BulkAddView({
           : p
       )
     );
+    setAddedIds((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
     setEditingId(null);
   };
 
