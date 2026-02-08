@@ -31,23 +31,33 @@ export async function extractPhrases(frenchText: string): Promise<ExtractedPhras
     model: 'gemini-2.0-flash',
     contents: `You are a French language teaching assistant. Analyze the following French text and extract useful phrases/expressions/chunks that a French learner should practice.
 
-Focus on extracting:
-- Idiomatic expressions and set phrases
-- Useful conversational chunks (2-5 words typically)
-- Common collocations and verb phrases
-- Discourse markers and connectors
-- Expressions that fit naturally into spoken French
+The goal is to find CONVERSATIONAL CHUNKS — groups of words (typically 2-5 words) that are spoken together fluidly in real French speech. These chunks should ideally contain a subject and verb, and often a preposition, forming a reusable sentence starter or transition that leads into what the speaker wants to say.
 
-Categorize each phrase into one of these themes:
+Good examples of what to extract:
+- "Je pense que" (I think that) — subject + verb + conjunction, leads into an opinion
+- "J'ai envie de" (I feel like) — subject + verb + preposition, leads into a desire
+- "Il faut que" (It's necessary that) — impersonal subject + verb + conjunction
+- "Je n'arrive pas à" (I can't manage to) — subject + negated verb + preposition
+- "Ça dépend de" (It depends on) — subject + verb + preposition
+- "Il me semble que" (It seems to me that) — sentence starter with verb
+
+Do NOT extract:
+- Single words (e.g. "cependant", "effectivement")
+- Simple noun phrases without a verb (e.g. "la situation", "mon avis")
+- Complete long sentences — extract only the reusable chunk/starter portion
+
+Every extracted chunk MUST contain at least a verb. Prioritize chunks that serve as sentence starters or conversational transitions — the kind of word groups a learner would drill to speak fluidly without hesitation.
+
+Categorize each chunk into one of these themes:
 ${THEMES_DESCRIPTION}
 
-For each phrase, provide:
-- "text": the French phrase exactly as it should be practiced
+For each chunk, provide:
+- "text": the French chunk exactly as it should be practiced (2-5 words, must include a verb)
 - "translation": a natural English translation
 - "phonetic": an approximate pronunciation guide for English speakers (use simple phonetic spelling, e.g. "zhuh pawns kuh")
 - "theme": one of "Opinions", "Desires & Intentions", "Obligations", "Difficulties", "Interaction"
 
-Extract as many relevant phrases as you can find. Prefer phrases that are reusable in many contexts rather than highly specific vocabulary. Do not include single words unless they are particularly useful discourse markers.
+Extract as many relevant chunks as you can find. Prefer chunks that are reusable in many contexts rather than highly specific to the text.
 
 French text to analyze:
 """
