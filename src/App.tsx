@@ -90,6 +90,8 @@ export default function App() {
     phonetic: '',
   });
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+  const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
+  const [pendingLeaveTab, setPendingLeaveTab] = useState<Tab | null>(null);
 
   const plan = WEEKLY_PLAN[activeDay];
   const chunksForDay = getChunksForDay(activeDay, customChunks);
@@ -244,15 +246,49 @@ export default function App() {
   };
 
   const handleTabChange = (tab: Tab) => {
+    const hasActiveSession = currentStep !== 'HOME' && currentStep !== 'COMPLETE';
+    const isLeavingPractice = activeTab === 'practice' && tab !== 'practice';
+    if (hasActiveSession && isLeavingPractice) {
+      setPendingLeaveTab(tab);
+      setShowLeaveConfirm(true);
+      return;
+    }
     setActiveTab(tab);
     setShowBulkAdd(false);
   };
+
+  const handleLogoClick = () => {
+    const hasActiveSession = currentStep !== 'HOME' && currentStep !== 'COMPLETE';
+    if (hasActiveSession) {
+      setPendingLeaveTab('practice');
+      setShowLeaveConfirm(true);
+      return;
+    }
+    setActiveTab('practice');
+  };
+
+  const handleLeaveConfirmLeave = () => {
+    resetToHome();
+    if (pendingLeaveTab !== null) {
+      setActiveTab(pendingLeaveTab);
+      setShowBulkAdd(false);
+    }
+    setShowLeaveConfirm(false);
+    setPendingLeaveTab(null);
+  };
+
+  const handleLeaveConfirmCancel = () => {
+    setShowLeaveConfirm(false);
+    setPendingLeaveTab(null);
+  };
+
+  const isOnPracticeHome = activeTab === 'practice' && (currentStep === 'HOME' || currentStep === 'COMPLETE');
 
   // Library tab — either bulk add view or library view
   if (activeTab === 'library') {
     return (
       <>
-        <Layout currentDay={activeDay} onOpenSettings={() => setShowApiKeyModal(true)}>
+        <Layout currentDay={activeDay} onOpenSettings={() => setShowApiKeyModal(true)} onLogoClick={handleLogoClick}>
           {showBulkAdd ? (
             <BulkAddView
               onBack={() => setShowBulkAdd(false)}
@@ -281,6 +317,41 @@ export default function App() {
         {showApiKeyModal && (
           <ApiKeySetup onClose={handleApiKeyModalClose} onSave={handleApiKeySave} />
         )}
+        {showLeaveConfirm && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            onClick={handleLeaveConfirmCancel}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="leave-confirm-title"
+          >
+            <div
+              className="bg-white border border-gray-200 rounded-2xl w-full max-w-sm shadow-xl p-6"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2 id="leave-confirm-title" className="text-lg font-bold text-gray-800 mb-3">
+                Leave practice?
+              </h2>
+              <p className="text-gray-600 text-sm mb-6">Your progress won&apos;t be saved.</p>
+              <div className="flex gap-3 justify-end">
+                <button
+                  type="button"
+                  onClick={handleLeaveConfirmCancel}
+                  className="px-4 py-2 text-gray-700 font-medium rounded-xl hover:bg-gray-100"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleLeaveConfirmLeave}
+                  className="px-4 py-2 bg-french-blue text-white font-medium rounded-xl hover:bg-blue-700"
+                >
+                  Leave
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </>
     );
   }
@@ -288,29 +359,51 @@ export default function App() {
   if (activeTab === 'history') {
     return (
       <>
-        <Layout currentDay={activeDay} onOpenSettings={() => setShowApiKeyModal(true)}>
+        <Layout currentDay={activeDay} onOpenSettings={() => setShowApiKeyModal(true)} onLogoClick={handleLogoClick}>
           <TabBar activeTab={activeTab} onTabChange={handleTabChange} />
           <HistoryView history={history} />
         </Layout>
         {showApiKeyModal && (
           <ApiKeySetup onClose={handleApiKeyModalClose} onSave={handleApiKeySave} />
         )}
+        {showLeaveConfirm && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            onClick={handleLeaveConfirmCancel}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="leave-confirm-title"
+          >
+            <div
+              className="bg-white border border-gray-200 rounded-2xl w-full max-w-sm shadow-xl p-6"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2 id="leave-confirm-title" className="text-lg font-bold text-gray-800 mb-3">
+                Leave practice?
+              </h2>
+              <p className="text-gray-600 text-sm mb-6">Your progress won&apos;t be saved.</p>
+              <div className="flex gap-3 justify-end">
+                <button
+                  type="button"
+                  onClick={handleLeaveConfirmCancel}
+                  className="px-4 py-2 text-gray-700 font-medium rounded-xl hover:bg-gray-100"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleLeaveConfirmLeave}
+                  className="px-4 py-2 bg-french-blue text-white font-medium rounded-xl hover:bg-blue-700"
+                >
+                  Leave
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </>
     );
   }
-
-  const handleLogoClick = () => {
-    const hasActiveSession = currentStep !== 'HOME' && currentStep !== 'COMPLETE';
-    if (hasActiveSession) {
-      if (!window.confirm("Leave practice? Your progress won't be saved.")) {
-        return;
-      }
-      resetToHome();
-    }
-    setActiveTab('practice');
-  };
-
-  const isOnPracticeHome = activeTab === 'practice' && (currentStep === 'HOME' || currentStep === 'COMPLETE');
 
   return (
     <>
@@ -791,6 +884,41 @@ export default function App() {
       </Layout>
       {showApiKeyModal && (
         <ApiKeySetup onClose={handleApiKeyModalClose} onSave={handleApiKeySave} />
+      )}
+      {showLeaveConfirm && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+          onClick={handleLeaveConfirmCancel}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="leave-confirm-title"
+        >
+          <div
+            className="bg-white border border-gray-200 rounded-2xl w-full max-w-sm shadow-xl p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 id="leave-confirm-title" className="text-lg font-bold text-gray-800 mb-3">
+              Leave practice?
+            </h2>
+            <p className="text-gray-600 text-sm mb-6">Your progress won&apos;t be saved.</p>
+            <div className="flex gap-3 justify-end">
+              <button
+                type="button"
+                onClick={handleLeaveConfirmCancel}
+                className="px-4 py-2 text-gray-700 font-medium rounded-xl hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleLeaveConfirmLeave}
+                className="px-4 py-2 bg-french-blue text-white font-medium rounded-xl hover:bg-blue-700"
+              >
+                Leave
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );
