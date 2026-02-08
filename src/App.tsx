@@ -300,21 +300,24 @@ export default function App() {
   }
 
   const handleLogoClick = () => {
-    if (window.confirm("Leave practice? Your progress won't be saved.")) {
+    const hasActiveSession = currentStep !== 'HOME' && currentStep !== 'COMPLETE';
+    if (hasActiveSession) {
+      if (!window.confirm("Leave practice? Your progress won't be saved.")) {
+        return;
+      }
       resetToHome();
     }
+    setActiveTab('practice');
   };
+
+  const isOnPracticeHome = activeTab === 'practice' && (currentStep === 'HOME' || currentStep === 'COMPLETE');
 
   return (
     <>
     <Layout
       currentDay={activeDay}
       onOpenSettings={() => setShowApiKeyModal(true)}
-      onLogoClick={
-        currentStep !== 'HOME' && currentStep !== 'COMPLETE'
-          ? handleLogoClick
-          : undefined
-      }
+      onLogoClick={!isOnPracticeHome ? handleLogoClick : undefined}
     >
       <TabBar activeTab={activeTab} onTabChange={handleTabChange} />
 
