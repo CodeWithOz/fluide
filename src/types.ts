@@ -29,6 +29,7 @@ export interface StepInfo {
 }
 
 export interface HistorySession {
+  id: string;
   date: string;
   theme: string;
   selectedChunks: Chunk[];

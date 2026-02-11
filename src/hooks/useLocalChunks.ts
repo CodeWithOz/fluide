@@ -115,12 +115,14 @@ export function useHistory() {
 
   const addSession = useCallback((session: HistorySession) => {
     setHistory((prev) => {
-      const existing = prev.findIndex((h) => h.date === session.date);
-      const next =
-        existing >= 0
-          ? prev.map((h, i) => (i === existing ? session : h))
-          : [session, ...prev];
-      return next.sort((a, b) => (b.date > a.date ? 1 : -1));
+      const next = [session, ...prev];
+      return next.sort((a, b) => {
+        // Sort by date descending, then by id descending (timestamp)
+        if (a.date !== b.date) {
+          return b.date > a.date ? 1 : -1;
+        }
+        return b.id > a.id ? 1 : -1;
+      });
     });
   }, []);
 
