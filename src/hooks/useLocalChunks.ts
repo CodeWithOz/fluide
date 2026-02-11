@@ -25,7 +25,19 @@ function loadHistory(): HistorySession[] {
   try {
     const raw = localStorage.getItem(FLUIDE_HISTORY_KEY);
     if (!raw) return [];
-    return JSON.parse(raw);
+    const sessions = JSON.parse(raw) as HistorySession[];
+
+    // Migrate legacy sessions without id field
+    return sessions.map((session, index) => {
+      if (!session.id) {
+        // Generate deterministic ID from date + index for legacy sessions
+        // Use date timestamp as base to ensure chronological ordering
+        const dateTimestamp = new Date(session.date).getTime();
+        const legacyId = `${dateTimestamp}-legacy-${index}`;
+        return { ...session, id: legacyId };
+      }
+      return session;
+    });
   } catch {
     return [];
   }
@@ -121,7 +133,12 @@ export function useHistory() {
         if (a.date !== b.date) {
           return b.date > a.date ? 1 : -1;
         }
-        return b.id > a.id ? 1 : -1;
+        // Extract numeric timestamp from id (handles both "12345" and "12345-legacy-0" formats)
+        const getTimestamp = (id: string) => {
+          const num = parseInt(id.split('-')[0]);
+          return isNaN(num) ? 0 : num;
+        };
+        return getTimestamp(b.id) - getTimestamp(a.id);
       });
     });
   }, []);

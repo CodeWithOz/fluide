@@ -21,12 +21,20 @@ export function HistoryView({ history }: { history: HistorySession[] }) {
                   day: 'numeric',
                 })}
                 {' '}
-                <span className="font-normal text-gray-500 text-sm">
-                  at {new Date(parseInt(session.id)).toLocaleTimeString('en-US', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-                </span>
+                {(() => {
+                  // Extract timestamp from id (handles both numeric and legacy format)
+                  const timestamp = session.id.includes('-legacy-')
+                    ? parseInt(session.id.split('-')[0])
+                    : parseInt(session.id);
+                  return !isNaN(timestamp) ? (
+                    <span className="font-normal text-gray-500 text-sm">
+                      at {new Date(timestamp).toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </span>
+                  ) : null;
+                })()}
               </p>
               <p className="text-sm text-french-blue mt-1">Theme: {session.theme}</p>
               <div className="mt-3">
