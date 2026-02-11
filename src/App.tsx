@@ -213,6 +213,7 @@ export default function App() {
   const handleFinishWorkout = () => {
     const theme = plan?.theme ?? activeDay;
     addSession({
+      id: Date.now().toString(),
       date: new Date().toISOString().split('T')[0],
       theme,
       selectedChunks,

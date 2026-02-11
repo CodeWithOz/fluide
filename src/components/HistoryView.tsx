@@ -8,9 +8,9 @@ export function HistoryView({ history }: { history: HistorySession[] }) {
         <p className="text-gray-500">No practice sessions yet. Finish a workout to see it here.</p>
       ) : (
         <div className="space-y-4">
-          {history.map((session, idx) => (
+          {history.map((session) => (
             <div
-              key={`${session.date}-${idx}`}
+              key={session.id}
               className="bg-white p-5 rounded-xl border border-gray-200 border-l-4 border-l-french-blue"
             >
               <p className="font-bold text-gray-800">
@@ -20,6 +20,21 @@ export function HistoryView({ history }: { history: HistorySession[] }) {
                   month: 'long',
                   day: 'numeric',
                 })}
+                {' '}
+                {(() => {
+                  // Extract timestamp from id (handles both numeric and legacy format)
+                  const timestamp = session.id.includes('-legacy-')
+                    ? parseInt(session.id.split('-')[0])
+                    : parseInt(session.id);
+                  return !isNaN(timestamp) ? (
+                    <span className="font-normal text-gray-500 text-sm">
+                      at {new Date(timestamp).toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </span>
+                  ) : null;
+                })()}
               </p>
               <p className="text-sm text-french-blue mt-1">Theme: {session.theme}</p>
               <div className="mt-3">
