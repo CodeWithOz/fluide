@@ -15,7 +15,7 @@ export async function checkSentenceIntegration(
   const ai = getClient();
 
   const response = await ai.models.generateContent({
-    model: 'gemini-2.0-flash',
+    model: 'gemini-2.5-flash',
     contents: `The student is learning the French chunk: "${chunk}".
 They wrote this sentence using it: "${sentence}".
 Check if the grammar is correct and if the chunk is used naturally.

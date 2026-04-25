@@ -28,7 +28,7 @@ export async function extractPhrases(frenchText: string): Promise<ExtractedPhras
   const ai = getClient();
 
   const response = await ai.models.generateContent({
-    model: 'gemini-2.0-flash',
+    model: 'gemini-2.5-flash',
     contents: `You are a French language teaching assistant. Analyze the following French text and extract useful phrases/expressions/chunks that a French learner should practice.
 
 The goal is to find CONVERSATIONAL CHUNKS — groups of words (typically 2-5 words) that are spoken together fluidly in real French speech. These chunks should ideally contain a subject and verb, and often a preposition, forming a reusable sentence starter or transition that leads into what the speaker wants to say.
