@@ -28,3 +28,6 @@ vite.config.js
 .env
 .env.local
 .env.*.local
+
+# Cursor
+.cursor/hooks/state
